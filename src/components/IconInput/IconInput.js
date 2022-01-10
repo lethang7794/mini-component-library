@@ -9,19 +9,26 @@ import VisuallyHidden from '../VisuallyHidden';
 const STYLES = {
   small: {
     iconSize: 16,
-    margin: 24,
     fontSize: 14,
-    lineHeight: 16,
+    borderThickness: 1,
+    height: 24,
   },
   large: {
     iconSize: 24,
-    margin: 36,
     fontSize: 18,
-    lineHeight: 21,
+    borderThickness: 2,
+    height: 36,
   },
 };
 
-const IconInput = ({ label, icon = 'search', width = 250, size, placeholder = 'Search...' }) => {
+const IconInput = ({
+  label,
+  icon = 'search',
+  width = 250,
+  size,
+  placeholder = 'Search...',
+  ...delegated
+}) => {
   const styles = STYLES[size];
 
   if (!styles) {
@@ -29,38 +36,32 @@ const IconInput = ({ label, icon = 'search', width = 250, size, placeholder = 'S
   }
 
   return (
-    <Wrapper style={{ '--width': width + 'px' }}>
+    <Wrapper>
       <IconWrapper style={{ '--size': styles.iconSize + 'px' }}>
-        <Icon id={icon} size={styles.iconSize} strokeWidth={2} />
         <VisuallyHidden>{label}</VisuallyHidden>
+        <Icon id={icon} size={styles.iconSize} strokeWidth={2} />
       </IconWrapper>
-      <InputWrapper style={{ '--margin': styles.margin + 'px' }}>
-        <Input
-          placeholder={placeholder}
-          style={{
-            '--font-size': styles.fontSize / 16 + 'rem',
-            '--line-height': styles.lineHeight / 16 + 'rem',
-          }}
-        />
-      </InputWrapper>
+      <Input
+        {...delegated}
+        placeholder={placeholder}
+        style={{
+          '--font-size': styles.fontSize / 16 + 'rem',
+          '--height': styles.height + 'px',
+          '--border-thickness': styles.borderThickness + 'px',
+          '--width': width + 'px',
+        }}
+      />
     </Wrapper>
   );
 };
 
-const Wrapper = styled.div`
+const Wrapper = styled.label`
+  display: block;
   position: relative;
-  border-bottom: 1px solid ${COLORS.black};
-  width: var(--width);
-
   color: ${COLORS.gray700};
 
   &:hover {
     color: ${COLORS.black};
-  }
-
-  &:focus-within {
-    outline: -webkit-focus-ring-color auto 1px;
-    outline-offset: 2px;
   }
 `;
 
@@ -75,24 +76,17 @@ const IconWrapper = styled.div`
   margin: auto;
 `;
 
-const InputWrapper = styled.div`
-  margin-left: var(--margin);
-`;
-
 const Input = styled.input`
-  position: relative;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  height: var(--height);
+  width: var(--width);
+  padding-left: var(--height);
 
-  color: ${COLORS.gray700};
+  color: inherit;
   border: none;
-  outline: none;
+  border-bottom: var(--border-thickness) solid ${COLORS.black};
 
   font-family: 'Roboto', sans-serif;
   font-size: var(--font-size);
-  line-height: var(--line-height);
   font-weight: 700;
 
   &::placeholder {
@@ -100,8 +94,9 @@ const Input = styled.input`
     font-weight: 400;
   }
 
-  ${Wrapper}:hover & {
-    color: ${COLORS.black};
+  &:focus {
+    outline: -webkit-focus-ring-color auto 1px;
+    outline-offset: 2px;
   }
 `;
 
